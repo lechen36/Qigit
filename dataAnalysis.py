@@ -15,7 +15,7 @@ start_analysis_date='20180501'
 ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
 pro = ts.pro_api()
 
-def data_check():
+def data_check():#测试下数据是否需要重新计算
     symbol_files_list=symbol_list()
     df000=data_read(symbol_files_list[-1])
     dateLatest=df000['trade_date'][-1]
