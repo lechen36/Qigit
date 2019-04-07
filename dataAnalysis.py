@@ -19,7 +19,7 @@ def data_check():
     symbol_files_list=symbol_list()
     df000=data_read(symbol_files_list[-1])
     dateLatest=df000['trade_date'][-1]
-    df111 = ts.pro_bar(pro_api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
+    df111 = ts.pro_bar(api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
     dateLatestOnline=df111['trade_date'][0]
     if dateLatest==dateLatestOnline:
         return False
