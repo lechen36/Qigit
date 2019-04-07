@@ -36,6 +36,7 @@ def ax_kline(ax,df):
         colorup='r',
         colordown='g',
         alpha=0.7)
+    ax.set_title('%s'%(df['ts_code'][0]))
 
 def ax_kdj(ax,df):
     ax.plot(df['iNum'],df[['kdj_k', 'kdj_d', 'kdj_j']])
@@ -43,6 +44,9 @@ def ax_kdj(ax,df):
     ax.set_ylabel('KDJ')
     ax.grid(True)
     plt.setp(ax.get_xticklabels(), visible=True)
+    
+    ax.set_title('KDJ:',loc='right')
+
 
 def ax_macd(ax,df):
     ax.bar(df['iNum'],df['MACD'],color='b')
@@ -53,6 +57,16 @@ def ax_macd(ax,df):
     #ax.set_title('MACD_%s_%0.2f'%(df['ts_code'][0],success_rate_macd))
     ax.grid(True)
     plt.setp(ax.get_xticklabels(), visible=True)
+    
+    df2=df[df['MACDXPre']>=1]  #选出MACD  金叉Pre
+    df2_success=df2[(df2['ROC+1']>0)|(df2['ROC+2']>0)|(df2['ROC+3']>0)] #把预测出金叉中后三天内上涨的画出来
+        
+    if len(df2)!=0:
+        success_rate_macd=len(df2_success)/len(df2)
+    else:
+        success_rate_macd=0
+        
+    ax.set_title('MACD:%0.2f'%(success_rate_macd),loc='right')
     
 
 
@@ -88,10 +102,14 @@ def kplot(df,index):
     
     if index=='MACD_KDJ':
         fig=plt.figure(figsize=[12,8])
-        ax1 = plt.axes([0.1,0.3,0.8,0.6])
+        ax1 = plt.axes([0.1,0.45,0.8,0.45])
         ax_kline(ax1,df)
-        ax2=plt.axes([0.1,0.1,0.8,0.2],sharex=ax1)
-        ax_kdj(ax2,df)
+        
+        ax2=plt.axes([0.1,0.25,0.8,0.20],sharex=ax1)
+        ax_macd(ax2,df)
+        
+        ax3=plt.axes([0.1,0.1,0.8,0.15],sharex=ax1)
+        ax_kdj(ax3,df)
         
     if index=='MACD':
         fig=plt.figure(figsize=[12,8])

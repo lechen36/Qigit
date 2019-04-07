@@ -148,7 +148,7 @@ def roc_index_cal(symbolData):
 if __name__== '__main__':
     ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
     pro = ts.pro_api()
-    df = ts.pro_bar(pro_api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180101')   
+    df = ts.pro_bar(api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180101')   
     df.index=pd.DatetimeIndex(df.trade_date)
     df=df.drop(columns=['trade_date'])
     df=df.sort_index()

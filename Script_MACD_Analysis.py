@@ -19,14 +19,14 @@ import kplot as kp
 import dataAnalysis as da
 #ResultDf=pd.read_pickle('result_data/Select_macd.pkl')
 #select_Df2=select_Df[select_Df['kdX']==1]#
-select_Df=select_Df_kdj
+select_Df=select_Df_macd
 Symbollist=select_Df.loc[:,'ts_code']
-for iSymbol in Symbollist[:10]:
+for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
     startDate='20180501'
     df1=df[df.index>startDate]
-    fig=kp.kplot(df1,'MACD')#绘图
-    fig=kp.kplot(df1,'KDJ')#绘图
+    #fig=kp.kplot(df1,'MACD')#绘图
+    #fig=kp.kplot(df1,'KDJ')#绘图
     fig=kp.kplot(df1,'MACD_KDJ')
     
 #   fig.savefig('pic/MACD_%s.png'%df1['ts_code'][0])
