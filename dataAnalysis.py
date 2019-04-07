@@ -19,7 +19,7 @@ def data_check():
     symbol_files_list=symbol_list()
     df000=data_read(symbol_files_list[-1])
     dateLatest=df000['trade_date'][-1]
-    df111 = ts.pro_bar(pro_api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
+    df111 = ts.pro_bar(api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
     dateLatestOnline=df111['trade_date'][0]
     if dateLatest==dateLatestOnline:
         return False
@@ -41,8 +41,8 @@ def data_cal_index():#把所有的数据进行分析并存储到一个文件中
                 continue
         
 def single_data_cal_index(iSymbol):
-    df = ts.pro_bar(pro_api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
-    df=df.sort_index()
+    df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
+    df=df.sort_values('trade_date')
     df=ic.macd_index_cal(df)
     df=ic.kdj_index_cal(df)
     df=ic.ema_index_cal(df)
