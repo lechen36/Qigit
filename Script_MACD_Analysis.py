@@ -12,11 +12,13 @@ da.data_cal_index()
 import pandas as pd
 import symbol_select as ss
 select_Df_macd=ss.macd_select()
-select_Df_kdj=ss.kdj_select()
+#select_Df_kdj=ss.kdj_select()
 
 # 绘图
 import kplot as kp
 import dataAnalysis as da
+import matplotlib.pyplot as plt 
+
 #ResultDf=pd.read_pickle('result_data/Select_macd.pkl')
 #select_Df2=select_Df[select_Df['kdX']==1]#
 select_Df=select_Df_macd
@@ -27,9 +29,9 @@ for iSymbol in Symbollist:
     df1=df[df.index>startDate]
     #fig=kp.kplot(df1,'MACD')#绘图
     #fig=kp.kplot(df1,'KDJ')#绘图
-    fig=kp.kplot(df1,'MACD_KDJ')
     
-#   fig.savefig('pic/MACD_%s.png'%df1['ts_code'][0])
-
+    fig=kp.kplot(df1,'MACD_KDJ')
+    #fig.savefig('MACD_%s.png'%df1['ts_code'][0])
+    plt.show()
 
 

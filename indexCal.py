@@ -20,22 +20,22 @@ def macd_index_cal(symbolData):
     df['DIFF']=short_ema-long_ema
     df['DEA']=df['DIFF'].ewm(span=9).mean()
     df['MACD']=2*(df['DIFF']-df['DEA'])
-    df2=df[['close','MACD']]
-    df2['MACDlag1']=df2['MACD'].shift(1)
+    df2=df.loc[:,['close','MACD']]
+    df2.loc[:,'MACDlag1']=df2['MACD'].shift(1)
     
     # MACD 
     df2['MACDX']=0
     df2.loc[(df2['MACD']>0) & (df2['MACDlag1']<0),'MACDX']=1
     df2.loc[(df2['MACD']<0) & (df2['MACDlag1']>0),'MACDX']=-1
-    df['MACDX']=df2['MACDX']
+    df.loc[:,'MACDX']=df2.loc[:,'MACDX']
 #   df['MACDalpha']=(df['DIFF']-df['DIFF'].shift(1))-(df['DEA']-df['DEA'].shift(1))
     
-    df2['MACDXPre']=0
-    df2['MACDlag4']=df2['MACD'].shift(4)
-    df2['MACDlag3']=df2['MACD'].shift(3)
-    df2['MACDlag2']=df2['MACD'].shift(2)
-    df2['MACDlag1']=df2['MACD'].shift(1)
-    df2['MACDlag0']=df2['MACD'].shift(0)
+    df2.loc[:,'MACDXPre']=0
+    df2.loc[:,'MACDlag4']=df2.loc[:,'MACD'].shift(4)
+    df2.loc[:,'MACDlag3']=df2.loc[:,'MACD'].shift(3)
+    df2.loc[:,'MACDlag2']=df2.loc[:,'MACD'].shift(2)
+    df2.loc[:,'MACDlag1']=df2.loc[:,'MACD'].shift(1)
+    df2.loc[:,'MACDlag0']=df2.loc[:,'MACD'].shift(0)
     
     for iData in df2.index:  
         x = np.array([-4,-3,-2,-1,0])
@@ -46,7 +46,7 @@ def macd_index_cal(symbolData):
             if (x0>0) & (x0<5):
                 df2.loc[iData,'MACDXPre']=int(x0)
                 
-    df['MACDXPre']=df2['MACDXPre']
+    df.loc[:,'MACDXPre']=df2.loc[:,'MACDXPre']
            
     return df
 
@@ -56,26 +56,26 @@ def kdj_index_cal(symbolData):
     lowList.fillna(value=df['low'].expanding().min(), inplace=True)
     highList = df['high'].rolling(9).max()
     highList.fillna(value=df['high'].expanding().max(), inplace=True)
-    rsv = (df['close'] - lowList) / (highList - lowList) * 100
-    df['kdj_k'] = rsv.ewm(com=2).mean()
-    df['kdj_d'] = df['kdj_k'].ewm(com=2).mean()
-    df['kdj_j'] = 3.0 * df['kdj_k'] - 2.0 * df['kdj_d']
+    rsv = (df.loc[:,'close'] - lowList) / (highList - lowList) * 100
+    df.loc[:,'kdj_k'] = rsv.ewm(com=2).mean()
+    df.loc[:,'kdj_d'] = df.loc[:,'kdj_k'].ewm(com=2).mean()
+    df.loc[:,'kdj_j'] = 3.0 * df.loc[:,'kdj_k'] - 2.0 * df.loc[:,'kdj_d']
     
     
-    df2=df[['kdj_k','kdj_d']]
-    df2['kd']=df2['kdj_k']-df2['kdj_d']
-    df2['kdlag1']=df2['kd'].shift(1)
-    df2['kdX']=0
-    df2.loc[(df2['kd']>0) & (df2['kdlag1']<0),'kdX']=1
+    df2=df.loc[:,['kdj_k','kdj_d']]
+    df2.loc[:,'kd']=df2.loc[:,'kdj_k']-df2.loc[:,'kdj_d']
+    df2.loc[:,'kdlag1']=df2.loc[:,'kd'].shift(1)
+    df2.loc[:,'kdX']=0
+    df2.loc[(df2.loc[:,'kd']>0) & (df2.loc[:,'kdlag1']<0),'kdX']=1
     df2.loc[(df2['kd']<0) & (df2['kdlag1']>0),'kdX']=-1
-    df['kdX']=df2['kdX']
+    df.loc[:,'kdX']=df2.loc[:,'kdX']
     
-    df2['kdXPre']=0
-    df2['kdlag4']=df2['kd'].shift(4)
-    df2['kdlag3']=df2['kd'].shift(3)
-    df2['kdlag2']=df2['kd'].shift(2)
-    df2['kdlag1']=df2['kd'].shift(1)
-    df2['kdlag0']=df2['kd'].shift(0)
+    df2.loc[:,'kdXPre']=0
+    df2.loc[:,'kdlag4']=df2.loc[:,'kd'].shift(4)
+    df2.loc[:,'kdlag3']=df2.loc[:,'kd'].shift(3)
+    df2.loc[:,'kdlag2']=df2.loc[:,'kd'].shift(2)
+    df2.loc[:,'kdlag1']=df2.loc[:,'kd'].shift(1)
+    df2.loc[:,'kdlag0']=df2.loc[:,'kd'].shift(0)
     
     for iData in df2.index:  
         x = np.array([-4,-3,-2,-1,0])
@@ -86,7 +86,7 @@ def kdj_index_cal(symbolData):
             if (x0>0) & (x0<5):
                 df2.loc[iData,'kdXPre']=int(x0)
                 
-    df['kdXPre']=df2['kdXPre']   
+    df.loc[:,'kdXPre']=df2.loc[:,'kdXPre']   
     return df
 
 def ema_index_cal(symbolData):
@@ -155,6 +155,7 @@ if __name__== '__main__':
     macd_index_cal(df)
     kdj_index_cal(df)
     rsi_index_cal(df)
+    
     
 
 

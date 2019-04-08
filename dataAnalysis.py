@@ -16,14 +16,17 @@ ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
 pro = ts.pro_api()
 
 def data_check():#测试下数据是否需要重新计算
-    symbol_files_list=symbol_list()
-    df000=data_read(symbol_files_list[-1])
-    dateLatest=df000['trade_date'][-1]
-    df111 = ts.pro_bar(api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
-    dateLatestOnline=df111['trade_date'][0]
-    if dateLatest==dateLatestOnline:
-        return False
-    else:
+    try:
+        symbol_files_list=symbol_list()
+        df000=data_read(symbol_files_list[-1])
+        dateLatest=df000['trade_date'][-1]
+        df111 = ts.pro_bar(api=pro, ts_code=symbol_files_list[-1][:-4], adj='qfq',start_date=start_fetch_date)
+        dateLatestOnline=df111['trade_date'][0]
+        if dateLatest==dateLatestOnline:
+            return False
+        else:
+            return True
+    except:
         return True
 
 def data_cal_index():#把所有的数据进行分析并存储到一个文件中
@@ -32,9 +35,10 @@ def data_cal_index():#把所有的数据进行分析并存储到一个文件中
         data['ST']=np.char.rfind(data['name'].values.astype('str'),'*ST')#字符串操作，去掉ST的股份
         dataSafe=data[data['ST']==-1] 
         iNum=0
-        for iSymbol in dataSafe.loc[0:20,'ts_code']:
+        for iSymbol in dataSafe.loc[:,'ts_code']:
             print(iSymbol,':',iNum)
             iNum+=1
+            
             try:
                 single_data_cal_index(iSymbol)
             except:
@@ -49,7 +53,7 @@ def single_data_cal_index(iSymbol):
     df=ic.roc_index_cal(df)
     df=df.fillna(0)
     startDate=start_analysis_date
-    df1=df[df.index>=startDate]
+    df1=df[df['trade_date']>=startDate]
     df1.to_pickle('symbol_data/%s.pkl'%df1['ts_code'][0])
 
     
