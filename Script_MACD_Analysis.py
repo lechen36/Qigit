@@ -26,7 +26,7 @@ Symbollist=select_Df.loc[:,'ts_code']
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
     startDate='20180501'
-    df1=df[df.index>startDate]
+    df1=df[df['trade_date']>startDate]
     #fig=kp.kplot(df1,'MACD')#绘图
     #fig=kp.kplot(df1,'KDJ')#绘图
     

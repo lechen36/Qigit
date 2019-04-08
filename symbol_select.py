@@ -20,7 +20,7 @@ def macd_select():
         iNum+=1        
         df = da.data_read(iSymbol)
         startDate='20180501'
-        df1=df[df.index>startDate]
+        df1=df[df['trade_date']>startDate]
         #df2=df1[df1['MACDX']==1]
         df2=df1[df1['MACDXPre']>=1]
         df2_success=df2[(df2['ROC+1']>3)|(df2['ROC+2']>3)|(df2['ROC+3']>3)] #把预测出金叉中后三天内上涨的画出来
@@ -45,7 +45,7 @@ def kdj_select():
         iNum+=1        
         df = da.data_read(iSymbol)
         startDate='20180501'
-        df1=df[df.index>startDate]     
+        df1=df[df['trade_date']>startDate]     
         df2=df1[df1['kdX']==1] #满足金叉的数据
         df2_success=df2[(df2['ROC+1']>0)|(df2['ROC+2']>0)|(df2['ROC+3']>0)] #把预测出金叉中后三天内上涨的画出来
         if len(df2)!=0:
