@@ -14,7 +14,7 @@ from matplotlib import ticker
 
 
 def ax_kline(ax,df):
-    date_tickers=df['trade_date']
+    date_tickers=df['trade_date'].values
     def format_date(x,pos=None):
     # 由于前面股票数据在 date 这个位置传入的都是int
     # 因此 x=0,1,2,...
@@ -97,7 +97,7 @@ def kplot(df,index):
         Name: 20190329, dtype: object
     '''
     
-    df=df.sort_index(ascending=True)
+    df=df.sort_values('trade_date')
     df['iNum']=np.arange(len(df))
     
     if index=='MACD_KDJ':
@@ -135,10 +135,14 @@ if __name__=='__main__':
     import indexCal as ic
     ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
     pro = ts.pro_api()
-    df = ts.pro_bar(pro_api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180601')   
+    df = ts.pro_bar(api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180601')
+    df=df.sort_values('trade_date')
+    df['iNum']=np.arange(len(df))
     ic.macd_index_cal(df)
     ic.kdj_index_cal(df)
-    
+    df=df.sort_values('trade_date')
+    df['iNum']=np.arange(len(df))
+    date_tickers=df['trade_date']
     kplot(df,'MACD')
     
     
