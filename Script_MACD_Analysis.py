@@ -22,7 +22,12 @@ import matplotlib.pyplot as plt
 #ResultDf=pd.read_pickle('result_data/Select_macd.pkl')
 #select_Df2=select_Df[select_Df['kdX']==1]#
 select_Df=select_Df_macd
-Symbollist=select_Df.loc[:,'ts_code']
+if len(select_Df)!=0:
+    Symbollist=select_Df.loc[:,'ts_code']
+else:
+    Symbollist=[]
+        
+    
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
     startDate='20180501'
@@ -32,6 +37,6 @@ for iSymbol in Symbollist:
     
     fig=kp.kplot(df1,'MACD_KDJ')
     #fig.savefig('MACD_%s.png'%df1['ts_code'][0])
-    plt.show()
+
 
 
