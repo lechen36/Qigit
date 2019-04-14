@@ -26,7 +26,6 @@ if len(select_Df)!=0:
     Symbollist=select_Df.loc[:,'ts_code']
 else:
     Symbollist=[]
-        
     
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)

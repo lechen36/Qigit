@@ -121,7 +121,11 @@ def kplot(df,index):
     elif index=='KDJ':
         ax_kdj(ax2,df)
 
-    elif index=='close':
+    elif index=='close':        
+        fig=plt.figure(figsize=[12,8])
+        ax1 = plt.axes([0.1,0.3,0.8,0.6])
+        ax_kline(ax1,df)
+        ax2=plt.axes([0.1,0.1,0.8,0.2],sharex=ax1)
         ax2.plot(df['iNum'],df[['close']])
         # make these tick labels invisible
         ax2.set_ylabel('close')
@@ -135,8 +139,9 @@ if __name__=='__main__':
     import indexCal as ic
     ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
     pro = ts.pro_api()
-    df = ts.pro_bar(api=pro, ts_code='000002.SZ', adj='qfq',start_date='20180601')
-    df=df.sort_values('trade_date')
+    df = ts.pro_bar(api=pro, ts_code='000002.SZ', adj='qfq',start_date='20181201')
+    #df = ts.pro_bar(ts_code='399005.SH', asset='I', start_date='20180101', end_date='20181212')
+    #df=df.sort_values('trade_date')
     df['iNum']=np.arange(len(df))
     ic.macd_index_cal(df)
     ic.kdj_index_cal(df)
@@ -144,6 +149,6 @@ if __name__=='__main__':
     df=df.sort_values('trade_date')
     df['iNum']=np.arange(len(df))
     date_tickers=df['trade_date']
-    kplot(df,'MACD')
+    kplot(df,'MACD_KDJ')
     
     
