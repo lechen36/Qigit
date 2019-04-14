@@ -131,6 +131,16 @@ def kplot(df,index):
         ax2.set_ylabel('close')
         ax2.grid(True)
         plt.setp(ax2.get_xticklabels(), visible=True)
+    elif index=='vol':        
+        fig=plt.figure(figsize=[12,8])
+        ax1 = plt.axes([0.1,0.3,0.8,0.6])
+        ax_kline(ax1,df)
+        ax2=plt.axes([0.1,0.1,0.8,0.2],sharex=ax1)
+        ax2.bar(df['iNum'],df['vol'],color='b')
+        # make these tick labels invisible
+        ax2.set_ylabel('vol')
+        ax2.grid(True)
+        plt.setp(ax2.get_xticklabels(), visible=True)
     return fig
     
 

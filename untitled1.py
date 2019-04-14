@@ -14,9 +14,9 @@ import kplot as kp
 import dataAnalysis as da
 import matplotlib.pyplot as plt 
 
-startDate='20180501'
+startDate='20181201'
 df1=df[df['trade_date']>startDate]
 
-fig=kp.kplot(df1,'close')
+fig=kp.kplot(df1,'vol')
 
 
