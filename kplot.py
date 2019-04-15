@@ -137,6 +137,8 @@ def kplot(df,index):
         ax_kline(ax1,df)
         ax2=plt.axes([0.1,0.1,0.8,0.2],sharex=ax1)
         ax2.bar(df['iNum'],df['vol'],color='b')
+        ax2.plot(df['iNum'],df[['mavol5']])
+        ax2.plot(df['iNum'],df[['mavol10']])
         # make these tick labels invisible
         ax2.set_ylabel('vol')
         ax2.grid(True)
@@ -159,6 +161,6 @@ if __name__=='__main__':
     df=df.sort_values('trade_date')
     df['iNum']=np.arange(len(df))
     date_tickers=df['trade_date']
-    kplot(df,'MACD_KDJ')
+    kplot(df,'vol')
     
     

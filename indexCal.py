@@ -145,7 +145,21 @@ def roc_index_cal(symbolData):
         df['ROC+%d'%i]=df['ROC-%d'%i].shift(-i) #未来1天后的变化率
     return df 
 
+def vol_index_cal(symbolData):
+    df=symbolData
+    df['mavol5']=df['vol'].rolling(5).mean()
+    df['mavol10']=df['vol'].rolling(10).mean()
+    
+    df2=df.loc[:,['mavol5','mavol10']]
+    df2.loc[:,'volminus']=df2.loc[:,'mavol10']-df2.loc[:,'mavol5']
+    df2.loc[:,'volminuslag1']=df2.loc[:,'volminus'].shift(1)
+    df2.loc[:,'volX']=0
+    df2.loc[(df2.loc[:,'volminus']>0) & (df2.loc[:,'volminuslag1']<0),'volX']=1
+    df.loc[:,'volX']=df2.loc[:,'volX']
+    return df
+
 if __name__== '__main__':
+    import kplot as kp 
     ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
     pro = ts.pro_api()
     df = ts.pro_bar(api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180101')   
@@ -155,6 +169,9 @@ if __name__== '__main__':
     macd_index_cal(df)
     kdj_index_cal(df)
     rsi_index_cal(df)
+    vol_index_cal(df)
+    kp.kplot(df,'vol')
+    
     
     
 
