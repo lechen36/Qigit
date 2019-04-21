@@ -4,6 +4,11 @@
 Created on Fri Apr  5 17:04:26 2019
 
 @author: mac
+
+第一： 选择一个日期作为测试日，看后续3天内有没有出现上涨，看下成功率的情况。
+把这些图绘制在 kplot
+
+第二：筹码计算分析试一下
 """
 # 把所有数据获取一遍，并更新数据信息，每天运行一次即可
 import dataAnalysis as da
@@ -30,12 +35,11 @@ else:
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
     startDate='20180501'
-    df1=df[df['trade_date']>startDate]
+    df1=df[(df['trade_date']>startDate) & (df['trade_date']<'20190420')]
     #fig=kp.kplot(df1,'MACD')#绘图
     #fig=kp.kplot(df1,'KDJ')#绘图
     
-    fig=kp.kplot(df1,'MACD_KDJ')
+    #fig=kp.kplot(df1,'MACD_KDJ')
     #fig.savefig('MACD_%s.png'%df1['ts_code'][0])
 
-
-
+Symbollist.to_pickle('Symbollist.pkl')

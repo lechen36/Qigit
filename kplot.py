@@ -7,6 +7,7 @@ Created on Mon Apr  1 21:49:17 2019
 """
 import mpl_finance
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import pandas as pd
 import numpy as np
 from matplotlib import ticker
@@ -36,7 +37,8 @@ def ax_kline(ax,df):
         colorup='r',
         colordown='g',
         alpha=0.7)
-    ax.set_title('%s'%(df['ts_code'][0]))
+    
+    ax.set_title('%s'%(df['ts_code'].iloc[0]))
 
 def ax_kdj(ax,df):
     ax.plot(df['iNum'],df[['kdj_k', 'kdj_d', 'kdj_j']])
@@ -65,6 +67,10 @@ def ax_macd(ax,df):
         success_rate_macd=len(df2_success)/len(df2)
     else:
         success_rate_macd=0
+    
+    
+    #vline=Line2D(xdata=[df['iNum'].iloc[-1],df['iNum'].iloc[-1]],ydata=[0,50])
+    #ax.add_line(vline)
         
     ax.set_title('MACD:%0.2f'%(success_rate_macd),loc='right')
     
@@ -143,6 +149,16 @@ def kplot(df,index):
         ax2.set_ylabel('vol')
         ax2.grid(True)
         plt.setp(ax2.get_xticklabels(), visible=True)
+    elif index=='incomeSum':        
+        fig=plt.figure(figsize=[12,8])
+        ax1 = plt.axes([0.1,0.3,0.8,0.6])
+        ax_kline(ax1,df)
+        ax2=plt.axes([0.1,0.1,0.8,0.2],sharex=ax1)
+        ax2.plot(df['iNum'],df[['incomeSum']])
+        # make these tick labels invisible
+        ax2.set_ylabel('incomeSum')
+        ax2.grid(True)
+        plt.setp(ax2.get_xticklabels(), visible=True)
     return fig
     
 
@@ -154,13 +170,15 @@ if __name__=='__main__':
     df = ts.pro_bar(api=pro, ts_code='000002.SZ', adj='qfq',start_date='20181201')
     #df = ts.pro_bar(ts_code='399005.SH', asset='I', start_date='20180101', end_date='20181212')
     #df=df.sort_values('trade_date')
-    df['iNum']=np.arange(len(df))
-    ic.macd_index_cal(df)
-    ic.kdj_index_cal(df)
-    ic.roc_index_cal(df)
     df=df.sort_values('trade_date')
     df['iNum']=np.arange(len(df))
+    df=ic.macd_index_cal(df)
+    df=ic.kdj_index_cal(df)
+    df=ic.roc_index_cal(df)
+    df=ic.vol_index_cal(df)
+
+    df['iNum']=np.arange(len(df))
     date_tickers=df['trade_date']
-    kplot(df,'vol')
+    kplot(df,'MACD')
     
     

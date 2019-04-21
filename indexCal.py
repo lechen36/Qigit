@@ -133,11 +133,11 @@ def rsi_index_cal(symbolData):
             rsies[j] = 100 - 100 / (1 + rs)
             symbolData['rsi%d'%periods]= rsies
             symbolData.fillna(0,inplace=True)
-            
     return symbolData
 
 def roc_index_cal(symbolData):
     df=symbolData
+    df=df.sort_values('trade_date')
     for i in [1,2,3,5]:
         N = df['close'].diff(i)
         D = df['close'].shift(i)
@@ -147,6 +147,7 @@ def roc_index_cal(symbolData):
 
 def vol_index_cal(symbolData):
     df=symbolData
+    df=df.sort_values('trade_date')
     df['mavol5']=df['vol'].rolling(5).mean()
     df['mavol10']=df['vol'].rolling(10).mean()
     
@@ -163,9 +164,8 @@ if __name__== '__main__':
     ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
     pro = ts.pro_api()
     df = ts.pro_bar(api=pro, ts_code='000001.SZ', adj='qfq',start_date='20180101')   
-    df.index=pd.DatetimeIndex(df.trade_date)
-    df=df.drop(columns=['trade_date'])
-    df=df.sort_index()
+#   df = ts.pro_bar(ts_code='0A0001.SH', asset='I', start_date='20180101', end_date='20190411')
+#   df = ts.get_hist_data('sh',start='2017-01-01',end='2018-03-31')
     macd_index_cal(df)
     kdj_index_cal(df)
     rsi_index_cal(df)

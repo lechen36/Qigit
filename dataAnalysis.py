@@ -79,7 +79,7 @@ def data_read(symbol):#读取数据的方法  symbol 为000002.SZ 或者 000002.
         return 0
         
 if __name__== '__main__':
-    pass
+    data_cal_index()
 
     
 
