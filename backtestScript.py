@@ -13,9 +13,10 @@ import matplotlib.pyplot as plt
 symbols=da.symbol_list()
 df_symbols_income=pd.DataFrame()
 
+    
 #for iSymbol in symbols[50:100]:
 Symbollist=pd.read_pickle('Symbollist.pkl')
-for iSymbol in Symbollist[5:]:
+for iSymbol in Symbollist[:10]:
 
     df = da.data_read(iSymbol)
     df.loc[:,'Long']=0
@@ -29,7 +30,7 @@ for iSymbol in Symbollist[5:]:
         else:
             continue
         
-        if (success_rate>0.3) & (df_hist.iloc[-1,:]['MACDXPre']>0) & (df['Long'].iloc[i-1]==0):
+        if (success_rate>0.6) & (df_hist.iloc[-1,:]['MACDXPre']>0) & (df['Long'].iloc[i-1]==0):
             df['Long'].iloc[i]=1
             
         elif df['Long'].iloc[i-1]==1: #如果昨天已经是1了
@@ -68,9 +69,10 @@ for iSymbol in Symbollist[5:]:
     df['incomeSum']=np.cumsum(df['income'].values)     
     dfnew=df.loc[:,['ts_code','trade_date','close','iClosePrice','Long','income','incomeSum']]  
     
-    kp.kplot(df,'incomeSum')
+    #kp.kplot(df,'incomeSum')
     df_symbols_income=df_symbols_income.append(dfnew.iloc[-1,:])
     print(iSymbol)
     
 df_symbols_income=df_symbols_income[['ts_code','incomeSum','close','trade_date']]
+df_symbols_income.mean()
     

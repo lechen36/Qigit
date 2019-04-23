@@ -1,14 +1,11 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr  8 22:26:35 2019
+Created on Mon Apr 22 21:32:14 2019
 
-@author: mac
+@author: MI
 """
 
-import dataAnalysis as da
-f1=da.data_read('000002.SZ')
+from strategy import MovingAverageCrossStrategy
 
-import matplotlib.pyplot as plt
-plt.axes
-
+M1=MovingAverageCrossStrategy()
+M1.calculate_signals()

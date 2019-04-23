@@ -35,11 +35,11 @@ else:
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
     startDate='20180501'
-    df1=df[(df['trade_date']>startDate) & (df['trade_date']<'20190420')]
+    df1=df[df['trade_date']>startDate]
     #fig=kp.kplot(df1,'MACD')#绘图
     #fig=kp.kplot(df1,'KDJ')#绘图
     
-    #fig=kp.kplot(df1,'MACD_KDJ')
-    #fig.savefig('MACD_%s.png'%df1['ts_code'][0])
+    fig=kp.kplot(df1,'MACD_KDJ')
+    fig.savefig('MACD_%s.png'%df1['ts_code'][0],dpi=600)
 
 Symbollist.to_pickle('Symbollist.pkl')
