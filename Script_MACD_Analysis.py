@@ -9,6 +9,7 @@ Created on Fri Apr  5 17:04:26 2019
 把这些图绘制在 kplot
 
 第二：筹码计算分析试一下
+重写回测系统
 """
 # 把所有数据获取一遍，并更新数据信息，每天运行一次即可
 import dataAnalysis as da

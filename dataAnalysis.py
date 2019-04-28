@@ -47,6 +47,7 @@ def data_cal_index():#把所有的数据进行分析并存储到一个文件中
 def single_data_cal_index(iSymbol):
     df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
     df=df.sort_values('trade_date')
+    
     df=ic.macd_index_cal(df)
     df=ic.kdj_index_cal(df)
     df=ic.ema_index_cal(df)
