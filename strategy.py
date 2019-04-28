@@ -42,7 +42,7 @@ class Strategy(object):
         raise NotImplementedError("Should implement calculate_signals()")
         
         
-class MovingAverageCrossStrategy(Strategy):
+class MACDStrategy(Strategy):
     """
     Carries out a basic Moving Average Crossover strategy with a
     short/long simple weighted moving average. Default short/long
