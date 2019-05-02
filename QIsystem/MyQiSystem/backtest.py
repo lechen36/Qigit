@@ -7,11 +7,43 @@ macd_select_backtest
 """
 import pandas as pd
 import numpy as np
-import dataAnalysis as da
-import kplot as kp
+from data import TSPro_DataHandler
+from strategy import MACDPro_Strategy
 import matplotlib.pyplot as plt
-symbols=da.symbol_list()
-df_symbols_income=pd.DataFrame()
+
+
+symbol_list=['000001.SZ']
+start_date='20180604'
+value_list=['ts_code','trade_date','close','MACDXPre','ROC+1','ROC+2','ROC+3']
+td=TSPro_DataHandler('/Users/mac/Qigit/symbol_data',symbol_list,start_date)
+i=0
+while(True):
+    i+=1
+    itd=td.get_latest_bars_values(symbol_list[0],value_list,90)
+
+
+
+    td.update_bars()
+
+
+
+
+    print(i)
+    if i>2:
+        break
+
+print(i,'end')
+0
+
+
+td1=td.get_latest_bars_values('000001.SZ',['trade_date','close','open'])
+td2=td.get_latest_bars('000001.SZ')
+print(td.get_latest_bar_datetime('000001.SZ'),td.get_latest_bars_values('000001.SZ',['trade_date','close','open'],10))
+td.update_bars()
+print(td.get_latest_bar_datetime('000001.SZ'),td.get_latest_bars_values('000001.SZ',['trade_date','close','open'],10))
+td.update_bars()
+print(td.get_latest_bar_datetime('000001.SZ'),td.get_latest_bars_values('000001.SZ',['trade_date','close','open'],10))
+    
 
     
 #for iSymbol in symbols[50:100]:
@@ -92,3 +124,4 @@ for iSymbol in Symbollist[:10]:
 df_symbols_income=df_symbols_income[['ts_code','incomeSum','close','trade_date']]
 df_symbols_income.mean()
     
+'''

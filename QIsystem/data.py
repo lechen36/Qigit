@@ -277,7 +277,7 @@ class HistoricTsDataHandler(DataHandler):
             start1=self.start_date.strftime('%Y%m%d')
             ts.set_token('bf3b4e51fcc67507e8694e9a3f2bd591be93bea276f9d86f564fe28f')
             pro = ts.pro_api()
-            df = ts.pro_bar(pro_api=pro, ts_code=s, adj='qfq',start_date=start1)
+            df = ts.pro_bar(api=pro, ts_code=s, adj='qfq',start_date=start1)
             df.index=pd.DatetimeIndex(df.trade_date)
             df=df.sort_index()
             df=ic.ema_index_cal(df)
@@ -385,3 +385,17 @@ class HistoricTsDataHandler(DataHandler):
                 if bar is not None:
                     self.latest_symbol_data[s].append(bar)
         self.events.put(MarketEvent())
+if __name__=='__main__':
+    import pandas as pd
+    import queue
+    print('OL')
+    start_date = datetime.datetime(2018,5,9,0,0,0)
+    symbol_list = ['600036.sh','601398.sh','601988.sh','600519.sh']
+    events0 = queue.Queue() #回测类的事件队列
+    dt=HistoricTsDataHandler(events0,'0',symbol_list,start_date)
+    dt.update_bars()
+    dt.update_bars()
+    dtsymbol=dt.get_latest_bars_values('600036.sh','close',1)
+    dt.update_bars()
+    dtsymbol=dt.get_latest_bars_values('600036.sh','close',10)
+    0
