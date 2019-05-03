@@ -77,6 +77,7 @@ class TSPro_DataHandler(DataHandler):
     def _import_ts_files(self):#把需要的数据读入symbol_data
         for iSymbol in self.symbol_list:
             df=pd.read_pickle('%s/%s.pkl'%(self.ts_pkl_dir,iSymbol))
+            
             self.symbol_data_all[iSymbol]=df
         
         self.bar_index=len(df[df['trade_date']<self.start_date])  #从开始的计算的起开始做数据按日更新【以最后一个为参考】
@@ -102,6 +103,9 @@ class TSPro_DataHandler(DataHandler):
         self.bar_index += 1
         for iSymbol in self.symbol_list:
             self.symbol_data[iSymbol]=self.symbol_data_all[iSymbol].iloc[:self.bar_index,:]
+        
+        if self.bar_index>=len(self.symbol_data_all[iSymbol]):
+            self.continue_backtest=False
            
 
 

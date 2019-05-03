@@ -52,14 +52,14 @@ class MACDPro_Strategy(Strategy):
         self.analysis_dates=90
         self.bars = bars  #bars数据操作类
         self.value_list=['ts_code','trade_date','close','MACDXPre','ROC+1','ROC+2','ROC+3']
-        self.data=self.bars.symbol_data
-        self.signals= self.data[self.symbol][['trade_date','close']]  #历史的signal 信息
-        self.signals.loc[:,'signals']=0 #dateframe:[trade_date,close,signals,return_rate_today,return_rate_cum]
+        self.signals= pd.DataFrame() #历史的signal 信息
         self.datetime=self.bars.get_latest_bar_datetime       
     
     def calculate_signals(self): #计算初始化的 买卖 方向 ，初始都是0:OUT  1:BUY
         self.bars.update_bars() #增加一条新的数据
+
         df_bars=self.bars.get_latest_bars_values(self.symbol,self.value_list,self.analysis_dates)
+        
         if df_bars.loc[:,'MACDXPre'].iloc[-1]>=1: #看当前是否是MACDPre买点
 
             df_bars_select=df_bars[df_bars['MACDXPre']>=1]
@@ -70,24 +70,42 @@ class MACDPro_Strategy(Strategy):
                 success_rate=0
 
             if success_rate>=0.5:
-                self.signals.loc[:,'signals'].iloc[-1]=1
-                
-                
-
-
+                df=pd.DataFrame({ 'trade_date':[self.bars.get_latest_bar_datetime(self.symbol)],
+                                  'signals':[1]
+                                })
+                self.signals=self.signals.append(df)
 
 
 if __name__=='__main__':
-    symbol_list=['000001.SZ']
+    symbol_list=['000004.SZ']
     start_date='20180604'
     value_list=['ts_code','trade_date','close','MACDXPre','ROC+1','ROC+2','ROC+3']
-    td=TSPro_DataHandler('/Users/mac/Qigit/symbol_data',symbol_list,start_date)
-    
-    iStrategy=MACDPro_Strategy(td,'000001.SZ')
-    signals_hist=[]
 
-    for i in range(3):
+    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
+    iStrategy=MACDPro_Strategy(td,symbol_list[0])
+    signals_hist=[]
+    while(iStrategy.bars.continue_backtest):
         iStrategy.calculate_signals()
+        #print(iStrategy.bars.get_latest_bar_datetime('000001.SZ'))
+        df=iStrategy.signals
+    
+    data_df=iStrategy.bars.symbol_data[iStrategy.symbol]
+    data_df=data_df.set_index('trade_date')
+    df=df.set_index('trade_date')
+    
+    dataNew=data_df.loc[:,['open','close']]
+    dataNew['signals']=df['signals']
+    dataNew.to_csv('1.csv')
+
+
+        
+
+    0
+
+
+
+
+
 
 
 
