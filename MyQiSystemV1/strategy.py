@@ -130,24 +130,38 @@ class MACDPro_Strategy(Strategy):
         self.signals.loc[:,'return_rate_cum']=np.cumsum(self.signals.loc[:,'return_rate_day'].values)
 
 def backtest(symbol):
-    symbol_list=[symbol]
-    start_date='20180604'
-    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
-    iStrategy=MACDPro_Strategy(td,symbol_list[0])
-    while(iStrategy.bars.continue_backtest):
-        iStrategy.calculate_signals()
+    try:
+        symbol_list=[symbol]
+        start_date='20180604'
+        td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
+        iStrategy=MACDPro_Strategy(td,symbol_list[0])
+        while(iStrategy.bars.continue_backtest):
+            iStrategy.calculate_signals()
+            
         res_df=iStrategy.signals
-        res_df.to_csv('%s.csv'%symbol)
-    return res_df
+        res_df.to_csv('res/%s.csv'%symbol)
+        return res_df
+    except:
+        return 0
 
 if __name__=='__main__':
     from concurrent import futures
-    symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
-    workers = 5
+    
+    import dataAnalysis as da
+    import time
+    t0 = time.time()
+    symbol_lists=da.symbol_list()
+    #symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
+    workers = 4
     with futures.ThreadPoolExecutor(workers) as executor:#采用多进程进行并行计算
-        res = executor.map(backtest, symbol_lists)
-        print(len(list(res)))
-0
+        res = executor.map(backtest, symbol_lists[:10])
+
+    elapsed = time.time()-t0
+    msg = "{:.2f}s"
+    print(msg.format(elapsed))
+
+    
+
 
 
     
