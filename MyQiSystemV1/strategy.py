@@ -12,8 +12,6 @@ import numpy as np
 import pandas as pd
 from data import TSPro_DataHandler
 
-
-
 class Strategy(object):
     """
     Strategy is an abstract base class providing an interface for
@@ -91,7 +89,7 @@ class MACDPro_Strategy(Strategy):
         index_close=self.signals.columns.get_loc('close')
         index_close_base=self.signals.columns.get_loc('close_base')
         index_rrd=self.signals.columns.get_loc('return_rate_day')
-        index_rrc=self.signals.columns.get_loc('return_rate_cum')
+        #index_rrc=self.signals.columns.get_loc('return_rate_cum')
 
         if len(self.signals)>=5:
             if list((self.signals.iloc[-2:,index_signals]).values)==[0,1]: #如果是由0-1新买入信号
