@@ -67,7 +67,7 @@ class TSPro_DataHandler(DataHandler):
         self.symbol_data_all = {}
         self.symbol_data = {}#已字典形式存储股票数据{'600000.sh':(dataframe),'600000.sh':(dataframe)}
         self.latest_symbol_data = {}#已字典形式存储最新的
-        self.continue_backtest = True   
+        self.continue_backtest = True  #数据Update到最新后就达到数据结尾标记，停止backtest 
         self.bar_index = 0    
         self._import_ts_files()
         self.update_bars()#首先初始化一次update

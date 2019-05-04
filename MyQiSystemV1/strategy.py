@@ -57,10 +57,9 @@ class MACDPro_Strategy(Strategy):
     
     def calculate_signals(self): #计算初始化的 买卖 方向 ，初始都是0:OUT  1:BUY
         self.bars.update_bars() #增加一条新的数据
-
         df_bars=self.bars.get_latest_bars_values(self.symbol,self.value_list,self.analysis_dates)
-        
-        if df_bars.loc[:,'MACDXPre'].iloc[-1]>=1: #看当前是否是MACDPre买点
+
+        if df_bars.iat[-1,df_bars.columns.get_loc('MACDXPre')]>=1: #看当前是否是MACDPre买点
 
             df_bars_select=df_bars[df_bars['MACDXPre']>=1]
             df_bars_select_success=df_bars_select[(df_bars_select['ROC+1']>1)|(df_bars_select['ROC+2']>1)|(df_bars_select['ROC+3']>2)] #把预测出金叉中后三天内上涨的画出来
@@ -70,37 +69,90 @@ class MACDPro_Strategy(Strategy):
                 success_rate=0
 
             if success_rate>=0.5:
-                df=pd.DataFrame({ 'trade_date':[self.bars.get_latest_bar_datetime(self.symbol)],
-                                  'signals':[1]
-                                })
-                self.signals=self.signals.append(df)
+                res_signals=1
+            else:
+                res_signals=0
+        else:
+            res_signals=0
 
-
-if __name__=='__main__':
-    symbol_list=['000004.SZ']
-    start_date='20180604'
-    value_list=['ts_code','trade_date','close','MACDXPre','ROC+1','ROC+2','ROC+3']
-
-    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
-    iStrategy=MACDPro_Strategy(td,symbol_list[0])
-    signals_hist=[]
-    while(iStrategy.bars.continue_backtest):
-        iStrategy.calculate_signals()
-        #print(iStrategy.bars.get_latest_bar_datetime('000001.SZ'))
-        df=iStrategy.signals
-    
-    data_df=iStrategy.bars.symbol_data[iStrategy.symbol]
-    data_df=data_df.set_index('trade_date')
-    df=df.set_index('trade_date')
-    
-    dataNew=data_df.loc[:,['open','close']]
-    dataNew['signals']=df['signals']
-    dataNew.to_csv('1.csv')
-
-
+        df=pd.DataFrame({ 
+            'trade_date':[self.bars.get_latest_bar_datetime(self.symbol)],
+            'close':self.bars.get_latest_bars_values(self.symbol,['close']).values[0],
+            'close_base':[0.0],
+            'signals':[res_signals],
+            'return_rate_day':[0.0],
+            'return_rate_cum':[0.0],
+            })
         
 
-    0
+        self.signals=self.signals.append(df)
+
+        index_signals=self.signals.columns.get_loc('signals')
+        index_close=self.signals.columns.get_loc('close')
+        index_close_base=self.signals.columns.get_loc('close_base')
+        index_rrd=self.signals.columns.get_loc('return_rate_day')
+        index_rrc=self.signals.columns.get_loc('return_rate_cum')
+
+        if len(self.signals)>=5:
+            if list((self.signals.iloc[-2:,index_signals]).values)==[0,1]: #如果是由0-1新买入信号
+                self.signals.iat[-1,index_close_base]=self.signals.iat[-1,index_close] #记录买入的价格
+
+
+            elif list((self.signals.iloc[-2:,index_signals]).values)==[1,1]: #如果是已经买入的情况，继续买入信号
+                self.signals.iat[-1,index_close_base]=self.signals.iat[-2,index_close_base]
+                self.signals.iat[-1,index_rrd]=(self.signals.iat[-1,index_close]-self.signals.iat[-2,index_close])/self.signals.iat[-1,index_close_base]*100.0
+
+            elif list((self.signals.iloc[-2:,index_signals]).values)==[1,0]: #如果出现卖出信号
+                self.signals.iat[-1,index_close_base]=self.signals.iat[-2,index_close_base]
+                self.signals.iat[-1,index_rrd]=(self.signals.iat[-1,index_close]-self.signals.iat[-2,index_close])/self.signals.iat[-1,index_close_base]*100.0 
+                
+                if list((self.signals.iloc[-3:,index_signals]).values)==[0,1,0]: #刚刚持有1天，出现卖出情况
+                    if self.signals.iat[-1,index_rrd]>8.0:
+                        self.signals.iat[-1,index_signals]=0
+                    elif self.signals.iat[-1,index_rrd]>-3.0:
+                        self.signals.iat[-1,index_signals]=1
+
+                elif list((self.signals.iloc[-4:,index_signals]).values)==[0,1,1,0]:
+                    if self.signals.iat[-1,index_rrd]>8.0:
+                        self.signals.iat[-1,index_signals]=0
+                    elif self.signals.iat[-1,index_rrd]>-1.0:
+                        self.signals.iat[-1,index_signals]=1
+
+                elif list((self.signals.iloc[-5:,index_signals]).values)==[0,1,1,1,0]:
+                    if self.signals.iat[-1,index_rrd]>8.0:
+                        self.signals.iat[-1,index_signals]=0
+                    elif self.signals.iat[-1,index_rrd]>1.0:
+                        self.signals.iat[-1,index_signals]=1
+
+                elif list((self.signals.iloc[-6:,index_signals]).values)==[0,1,1,1,1,0]:
+                    if self.signals.iat[-1,index_rrd]>8.0:
+                        self.signals.iat[-1,index_signals]=0
+                    elif self.signals.iat[-1,index_rrd]>3.0:
+                        self.signals.iat[-1,index_signals]=1
+        self.signals.loc[:,'return_rate_cum']=np.cumsum(self.signals.loc[:,'return_rate_day'].values)
+
+def backtest(symbol):
+    symbol_list=[symbol]
+    start_date='20180604'
+    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
+    iStrategy=MACDPro_Strategy(td,symbol_list[0])
+    while(iStrategy.bars.continue_backtest):
+        iStrategy.calculate_signals()
+        res_df=iStrategy.signals
+        res_df.to_csv('%s.csv'%symbol)
+    return res_df
+
+if __name__=='__main__':
+    from concurrent import futures
+    symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
+    workers = 5
+    with futures.ThreadPoolExecutor(workers) as executor:#采用多进程进行并行计算
+        res = executor.map(backtest, symbol_lists)
+        print(len(list(res)))
+0
+
+
+    
 
 
 
