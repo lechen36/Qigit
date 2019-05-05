@@ -7,7 +7,10 @@ import pandas as pd
 import indexCal as ic
 import numpy as np
 import os
+import multiprocessing as mp
+from multiprocessing import Pool
 
+import time
 
 
 start_fetch_date='20180101'
@@ -34,28 +37,35 @@ def data_cal_index():#把所有的数据进行分析并存储到一个文件中
         data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
         data['ST']=np.char.rfind(data['name'].values.astype('str'),'*ST')#字符串操作，去掉ST的股份
         dataSafe=data[data['ST']==-1] 
-        iNum=0
-        for iSymbol in dataSafe.loc[:,'ts_code']:
-            print(iSymbol,':',iNum)
-            iNum+=1
-            
-            try:
-                single_data_cal_index(iSymbol)
-            except:
-                continue
+        
+        t0 = time.time()
+        symbol_lists=dataSafe.loc[:,'ts_code']
+        #symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
+        with Pool(2) as p:
+            p.map(single_data_cal_index, symbol_lists) #采用多进程进行并行计算
+
+        elapsed = time.time()-t0
+        msg = "{:.2f}s"
+        print(msg.format(elapsed)) 
+
+
         
 def single_data_cal_index(iSymbol):
-    df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
-    df=df.sort_values('trade_date')
-    
-    df=ic.macd_index_cal(df)
-    df=ic.kdj_index_cal(df)
-    df=ic.ema_index_cal(df)
-    df=ic.roc_index_cal(df)
-    df=df.fillna(0)
-    startDate=start_analysis_date
-    df1=df[df['trade_date']>=startDate]
-    df1.to_pickle('symbol_data/%s.pkl'%df1['ts_code'][0])
+    try:
+        df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
+        df=df.sort_values('trade_date')
+        
+        df=ic.macd_index_cal(df)
+        df=ic.kdj_index_cal(df)
+        df=ic.ema_index_cal(df)
+        df=ic.roc_index_cal(df)
+        df=df.fillna(0)
+        startDate=start_analysis_date
+        df1=df[df['trade_date']>=startDate]
+        df1.to_pickle('symbol_data/%s.pkl'%df1['ts_code'][0])
+    except:
+        pass
+
 
     
     
@@ -80,6 +90,8 @@ def data_read(symbol):#读取数据的方法  symbol 为000002.SZ 或者 000002.
         return 0
         
 if __name__== '__main__':
+    if mp.get_start_method!='spawn':
+        mp.set_start_method('spawn')
     data_cal_index()
 
     
