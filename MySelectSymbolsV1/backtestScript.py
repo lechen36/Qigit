@@ -16,7 +16,8 @@ df_symbols_income=pd.DataFrame()
     
 #for iSymbol in symbols[50:100]:
 Symbollist=pd.read_pickle('Symbollist.pkl')
-for iSymbol in Symbollist[:10]:
+
+for iSymbol in Symbollist[:]:
 
     df = da.data_read(iSymbol)
     df.loc[:,'Long']=0
@@ -91,4 +92,5 @@ for iSymbol in Symbollist[:10]:
     
 df_symbols_income=df_symbols_income[['ts_code','incomeSum','close','trade_date']]
 df_symbols_income.mean()
+df_symbols_select=df_symbols_income[df_symbols_income['incomeSum']>6]
     

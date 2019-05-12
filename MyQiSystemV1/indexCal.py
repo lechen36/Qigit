@@ -17,14 +17,14 @@ def macd_index_cal(symbolData):
     df=symbolData
     short_ema=df['close'].ewm(span=12).mean()
     long_ema=df['close'].ewm(span=26).mean()
-    df['DIFF']=short_ema-long_ema
-    df['DEA']=df['DIFF'].ewm(span=9).mean()
-    df['MACD']=2*(df['DIFF']-df['DEA'])
+    df.loc[:,'DIFF']=short_ema-long_ema
+    df.loc[:,'DEA']=df['DIFF'].ewm(span=9).mean()
+    df.loc[:,'MACD']=2*(df['DIFF']-df['DEA'])
     df2=df.loc[:,['close','MACD']]
     df2.loc[:,'MACDlag1']=df2['MACD'].shift(1)
     
     # MACD 
-    df2['MACDX']=0
+    df2.loc[:,'MACDX']=0
     df2.loc[(df2['MACD']>0) & (df2['MACDlag1']<0),'MACDX']=1
     df2.loc[(df2['MACD']<0) & (df2['MACDlag1']>0),'MACDX']=-1
     df.loc[:,'MACDX']=df2.loc[:,'MACDX']
@@ -91,10 +91,10 @@ def kdj_index_cal(symbolData):
 
 def ema_index_cal(symbolData):
     df=symbolData
-    df['ema5']=df['close'].ewm(span=5).mean()
-    df['ema10']=df['close'].ewm(span=10).mean()
-    df['ema20']=df['close'].ewm(span=20).mean()
-    df['ema60']=df['close'].ewm(span=60).mean()
+    df.loc[:,'ema5']=df['close'].ewm(span=5).mean()
+    df.loc[:,'ema10']=df['close'].ewm(span=10).mean()
+    df.loc[:,'ema20']=df['close'].ewm(span=20).mean()
+    df.loc[:,'ema60']=df['close'].ewm(span=60).mean()
     return df
 
 def rsi_index_cal(symbolData):
@@ -141,15 +141,15 @@ def roc_index_cal(symbolData):
     for i in [1,2,3,5]:
         N = df['close'].diff(i)
         D = df['close'].shift(i)
-        df['ROC-%d'%i]=N/D*100.0 # x% 百分比
-        df['ROC+%d'%i]=df['ROC-%d'%i].shift(-i) #未来1天后的变化率
+        df.loc[:,'ROC-%d'%i]=N/D*100.0 # x% 百分比
+        df.loc[:,'ROC+%d'%i]=df['ROC-%d'%i].shift(-i) #未来1天后的变化率
     return df 
 
 def vol_index_cal(symbolData):
     df=symbolData
     df=df.sort_values('trade_date')
-    df['mavol5']=df['vol'].rolling(5).mean()
-    df['mavol10']=df['vol'].rolling(10).mean()
+    df.loc[:,'mavol5']=df['vol'].rolling(5).mean()
+    df.loc[:,'mavol10']=df['vol'].rolling(10).mean()
     
     df2=df.loc[:,['mavol5','mavol10']]
     df2.loc[:,'volminus']=df2.loc[:,'mavol10']-df2.loc[:,'mavol5']

@@ -120,9 +120,6 @@ if __name__=='__main__': #本模块的测试程序
     print(td.get_latest_bar_datetime('000001.SZ'),td.get_latest_bars_values('000001.SZ',['trade_date','close','open'],10))
     
 
-    0
-    
-
 
     
     

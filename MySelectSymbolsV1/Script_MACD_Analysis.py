@@ -41,6 +41,7 @@ for iSymbol in Symbollist:
     #fig=kp.kplot(df1,'KDJ')#绘图
     
     fig=kp.kplot(df1,'MACD_KDJ')
-    fig.savefig('MACD_%s.png'%df1['ts_code'][0],dpi=600)
+    fig.savefig('MACD_%s.jpg'%df1['ts_code'][0],dpi=600)
 
 Symbollist.to_pickle('Symbollist.pkl')
+

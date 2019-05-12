@@ -151,14 +151,15 @@ if __name__=='__main__':
     import dataAnalysis as da
     import time
     t0 = time.time()
-    symbol_lists=da.symbol_list()
-    #symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
+    #symbol_lists=da.symbol_list()
+    symbol_lists=['600250.SH','002270.SZ']
     with Pool(2) as p:
         p.map(backtest, symbol_lists[:20]) #采用多进程进行并行计算
 
     elapsed = time.time()-t0
     msg = "{:.2f}s"
     print(msg.format(elapsed))
+    0
 
     
 
