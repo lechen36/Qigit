@@ -24,6 +24,7 @@ pro = ts.pro_api()
 data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
 data.loc[:,'ST']=np.char.rfind(data['name'].values.astype('str'),'*ST')#字符串操作，去掉ST的股份
 dataSafe=data[data['ST']==-1] 
+dataSafe=dataSafe[dataSafe['ts_code'].str.slice(0,3)!='300']#去掉创业板的数据
 symbol_list=list(dataSafe['ts_code'])
 
 import fix_yahoo_finance as yf
