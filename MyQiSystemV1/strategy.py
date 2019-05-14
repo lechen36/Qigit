@@ -107,7 +107,7 @@ class MACDPro_Strategy(Strategy):
                 if list((self.signals.iloc[-3:,index_signals]).values)==[0,1,0]: #刚刚持有1天，出现卖出情况
                     if self.signals.iat[-1,index_rrd]>8.0:
                         self.signals.iat[-1,index_signals]=0
-                    elif self.signals.iat[-1,index_rrd]>-3.0:
+                    elif self.signals.iat[-1,index_rrd]>-2.0:
                         self.signals.iat[-1,index_signals]=1
 
                 elif list((self.signals.iloc[-4:,index_signals]).values)==[0,1,1,0]:
@@ -152,7 +152,8 @@ if __name__=='__main__':
     import time
     t0 = time.time()
     #symbol_lists=da.symbol_list()
-    symbol_lists=['600250.SH','002270.SZ']
+    symbol_lists=['002829.SZ','002552.SZ','002237.SZ']
+    #symbol_lists=pd.read_pickle('/Users/mac/Qigit/MySelectSymbolsV1/Symbollist.pkl')
     with Pool(2) as p:
         p.map(backtest, symbol_lists[:20]) #采用多进程进行并行计算
 

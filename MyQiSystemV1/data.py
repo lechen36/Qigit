@@ -24,9 +24,6 @@ class DataHandler(object):
     """
 
     __metaclass__ = ABCMeta
-
-
-
     @abstractmethod
     def get_latest_bars(self, symbol, N=1):
         """

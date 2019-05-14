@@ -86,11 +86,18 @@ for iSymbol in Symbollist[:]:
     df['incomeSum']=np.cumsum(df['income'].values)     
     dfnew=df.loc[:,['ts_code','trade_date','close','iClosePrice','Long','income','incomeSum']]  
     
-    kp.kplot(df,'incomeSum')
+    #kp.kplot(df,'incomeSum')
     df_symbols_income=df_symbols_income.append(dfnew.iloc[-1,:])
     print(iSymbol)
     
 df_symbols_income=df_symbols_income[['ts_code','incomeSum','close','trade_date']]
 df_symbols_income.mean()
-df_symbols_select=df_symbols_income[df_symbols_income['incomeSum']>6]
+df_symbols_select=df_symbols_income[(df_symbols_income['incomeSum']>14) & #选择收益率大于14%的
+                                    (df_symbols_income['ts_code'].str.slice(0,3)!='300')  #过滤创业板股票
+                                    ]
+
+
+        
+
+
     

@@ -29,20 +29,39 @@ def data_check():#测试下数据是否需要重新计算
     except:
         return True
 
-def data_cal_index():#把所有的数据进行分析并存储到一个文件中
+def data_cal_index(analysis_slice=0):#把所有的数据进行分析并存储到一个文件中
     if data_check()==True:
         data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
         data['ST']=np.char.rfind(data['name'].values.astype('str'),'*ST')#字符串操作，去掉ST的股份
         dataSafe=data[data['ST']==-1] 
+        dataSafe=dataSafe[dataSafe['ts_code'].str.slice(0,3)!='300']#去掉创业板的数据
         iNum=0
-        for iSymbol in dataSafe.loc[:,'ts_code']:
-            print(iSymbol,':',iNum)
-            iNum+=1
-            
-            try:
-                single_data_cal_index(iSymbol)
-            except:
-                continue
+        if analysis_slice==0:  #一个console进行计算
+            for iSymbol in dataSafe.loc[:,'ts_code']:
+                print(iSymbol,':',iNum)
+                iNum+=1
+                try:
+                    single_data_cal_index(iSymbol)
+                except:
+                    continue
+        elif analysis_slice==21:  #2个console进行计算Part1
+            for iSymbol in dataSafe.loc[:,'ts_code'].iloc[:1300]:
+                print(iSymbol,':',iNum)
+                iNum+=1
+                try:
+                    single_data_cal_index(iSymbol)
+                except:
+                    continue
+        
+        elif analysis_slice==22:  #2个console进行计算Part2
+            for iSymbol in dataSafe.loc[:,'ts_code'].iloc[1300:]:
+                print(iSymbol,':',iNum)
+                iNum+=1           
+                try:
+                    single_data_cal_index(iSymbol)
+                except:
+                    continue
+
         
 def single_data_cal_index(iSymbol):
     df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
@@ -80,7 +99,8 @@ def data_read(symbol):#读取数据的方法  symbol 为000002.SZ 或者 000002.
         return 0
         
 if __name__== '__main__':
-    data_cal_index()
+    #data_cal_index(21)
+    data_cal_index(22)
 
     
 
