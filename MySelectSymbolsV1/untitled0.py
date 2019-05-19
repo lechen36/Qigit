@@ -1,11 +1,14 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr 22 21:32:14 2019
+Created on Fri May 17 20:42:58 2019
 
-@author: MI
+@author: mac
 """
 
-from strategy import MovingAverageCrossStrategy
-
-M1=MovingAverageCrossStrategy()
-M1.calculate_signals()
+import pandas as pd
+all_return_info=pd.DataFrame(columns=['ts_code','num','return_final','return_average'])
+all_return_info['ts_code']=['101','102','103','104']
+all_return_info.set_index('ts_code',inplace=True)
+all_return_info['num']=[102,13,2,23]
+a1=all_return_info['num'].max()

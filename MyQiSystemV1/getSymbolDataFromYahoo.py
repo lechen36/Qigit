@@ -48,12 +48,12 @@ def download_data(iSymbol):
 if __name__=='__main__':   
     import multiprocessing as mp
     from multiprocessing import Pool
-    mp.set_start_method('spawn')
+    #mp.set_start_method('spawn')
 
     import time
     t0 = time.time()
     symbol_list = [i.replace('.SH','.SS') for i in symbol_list]
-    with Pool(8) as p:
+    with Pool(100) as p:
         p.map(download_data, symbol_list[:]) #采用多进程进行并行计算
 
     elapsed = time.time()-t0

@@ -32,6 +32,7 @@ if len(select_Df)!=0:
     Symbollist=select_Df.loc[:,'ts_code']
 else:
     Symbollist=[]
+Symbollist.to_pickle('Symbollist.pkl')
     
 for iSymbol in Symbollist:
     df=da.data_read(iSymbol)
@@ -43,5 +44,4 @@ for iSymbol in Symbollist:
     fig=kp.kplot(df1,'MACD_KDJ')
     fig.savefig('MACD_%s.jpg'%df1['ts_code'][0],dpi=600)
 
-Symbollist.to_pickle('Symbollist.pkl')
 

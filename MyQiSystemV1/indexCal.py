@@ -41,10 +41,13 @@ def macd_index_cal(symbolData):
         x = np.array([-4,-3,-2,-1,0])
         y = df2.loc[iData,['MACDlag4','MACDlag3','MACDlag2','MACDlag1','MACDlag0']].values
         k, b, r_value, p_value, std_err = stats.linregress(x,y) #一维线性回归，返回斜率、截距、r相关系数等
-        x0=-b/k#计算为0的时刻x值 联合r值进行计算 如果5天内r值比较高，可以预测则可以计算下。
-        if r_value>=0.90:
-            if (x0>0) & (x0<5):
-                df2.loc[iData,'MACDXPre']=int(x0)
+        try:
+            x0=-b/k#计算为0的时刻x值 联合r值进行计算 如果5天内r值比较高，可以预测则可以计算下。
+            if r_value>=0.90:
+                if (x0>0) & (x0<5):
+                    df2.loc[iData,'MACDXPre']=int(x0)
+        except:
+            pass
                 
     df.loc[:,'MACDXPre']=df2.loc[:,'MACDXPre']
            
@@ -81,10 +84,13 @@ def kdj_index_cal(symbolData):
         x = np.array([-4,-3,-2,-1,0])
         y = df2.loc[iData,['kdlag4','kdlag3','kdlag2','kdlag1','kdlag0']].values
         k, b, r_value, p_value, std_err = stats.linregress(x,y) #一维线性回归，返回斜率、截距、r相关系数等
-        x0=-b/k#计算为0的时刻x值 联合r值进行计算 如果5天内r值比较高，可以预测则可以计算下。
-        if r_value>=0.90:
-            if (x0>0) & (x0<5):
-                df2.loc[iData,'kdXPre']=int(x0)
+        try:
+            x0=-b/k#计算为0的时刻x值 联合r值进行计算 如果5天内r值比较高，可以预测则可以计算下。
+            if r_value>=0.90:
+                if (x0>0) & (x0<5):
+                    df2.loc[iData,'kdXPre']=int(x0)
+        except:
+            pass
                 
     df.loc[:,'kdXPre']=df2.loc[:,'kdXPre']   
     return df
@@ -131,7 +137,7 @@ def rsi_index_cal(symbolData):
             down_avg = (down_avg * (periods - 1) + down) / periods
             rs = up_avg / down_avg
             rsies[j] = 100 - 100 / (1 + rs)
-            symbolData['rsi%d'%periods]= rsies
+            symbolData.loc[:,'rsi%d'%periods]= rsies
             symbolData.fillna(0,inplace=True)
     return symbolData
 

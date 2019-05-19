@@ -6,6 +6,8 @@ Created on Tue Oct  2 16:28:23 2018
 @author: mac
 input:symbolData  date(日期)  open  high close low volume
 output:df   date(日期)  open  high close low volume  macd ...
+
+2019.5.16 修改loc
 """
 from scipy import stats
 import numpy as np
@@ -17,14 +19,14 @@ def macd_index_cal(symbolData):
     df=symbolData
     short_ema=df['close'].ewm(span=12).mean()
     long_ema=df['close'].ewm(span=26).mean()
-    df['DIFF']=short_ema-long_ema
-    df['DEA']=df['DIFF'].ewm(span=9).mean()
-    df['MACD']=2*(df['DIFF']-df['DEA'])
+    df.loc[:,'DIFF']=short_ema-long_ema
+    df.loc[:,'DEA']=df['DIFF'].ewm(span=9).mean()
+    df.loc[:,'MACD']=2*(df['DIFF']-df['DEA'])
     df2=df.loc[:,['close','MACD']]
     df2.loc[:,'MACDlag1']=df2['MACD'].shift(1)
     
     # MACD 
-    df2['MACDX']=0
+    df2.loc[:,'MACDX']=0
     df2.loc[(df2['MACD']>0) & (df2['MACDlag1']<0),'MACDX']=1
     df2.loc[(df2['MACD']<0) & (df2['MACDlag1']>0),'MACDX']=-1
     df.loc[:,'MACDX']=df2.loc[:,'MACDX']
@@ -91,10 +93,10 @@ def kdj_index_cal(symbolData):
 
 def ema_index_cal(symbolData):
     df=symbolData
-    df['ema5']=df['close'].ewm(span=5).mean()
-    df['ema10']=df['close'].ewm(span=10).mean()
-    df['ema20']=df['close'].ewm(span=20).mean()
-    df['ema60']=df['close'].ewm(span=60).mean()
+    df.loc[:,'ema5']=df['close'].ewm(span=5).mean()
+    df.loc[:,'ema10']=df['close'].ewm(span=10).mean()
+    df.loc[:,'ema20']=df['close'].ewm(span=20).mean()
+    df.loc[:,'ema60']=df['close'].ewm(span=60).mean()
     return df
 
 def rsi_index_cal(symbolData):
@@ -131,7 +133,7 @@ def rsi_index_cal(symbolData):
             down_avg = (down_avg * (periods - 1) + down) / periods
             rs = up_avg / down_avg
             rsies[j] = 100 - 100 / (1 + rs)
-            symbolData['rsi%d'%periods]= rsies
+            symbolData.loc[:,'rsi%d'%periods]= rsies
             symbolData.fillna(0,inplace=True)
     return symbolData
 
@@ -141,8 +143,8 @@ def roc_index_cal(symbolData):
     for i in [1,2,3,5]:
         N = df['close'].diff(i)
         D = df['close'].shift(i)
-        df['ROC-%d'%i]=N/D*100.0 # x% 百分比
-        df['ROC+%d'%i]=df['ROC-%d'%i].shift(-i) #未来1天后的变化率
+        df.loc[:,'ROC-%d'%i]=N/D*100.0 # x% 百分比
+        df.loc[:,'ROC+%d'%i]=df['ROC-%d'%i].shift(-i) #未来1天后的变化率
     return df 
 
 def vol_index_cal(symbolData):

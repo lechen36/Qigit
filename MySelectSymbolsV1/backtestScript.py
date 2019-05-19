@@ -17,6 +17,7 @@ df_symbols_income=pd.DataFrame()
 #for iSymbol in symbols[50:100]:
 Symbollist=pd.read_pickle('Symbollist.pkl')
 
+
 for iSymbol in Symbollist[:]:
 
     df = da.data_read(iSymbol)
@@ -92,10 +93,21 @@ for iSymbol in Symbollist[:]:
     
 df_symbols_income=df_symbols_income[['ts_code','incomeSum','close','trade_date']]
 df_symbols_income.mean()
-df_symbols_select=df_symbols_income[(df_symbols_income['incomeSum']>14) & #选择收益率大于14%的
+df_symbols_select=df_symbols_income[(df_symbols_income['incomeSum']>22) & #选择收益率大于14%的
                                     (df_symbols_income['ts_code'].str.slice(0,3)!='300')  #过滤创业板股票
                                     ]
 
+
+
+for iSymbol in df_symbols_select['ts_code'].iloc[10:]:
+    df=da.data_read(iSymbol)
+    startDate='20180501'
+    df1=df[df['trade_date']>startDate]
+    #fig=kp.kplot(df1,'MACD')#绘图
+    #fig=kp.kplot(df1,'KDJ')#绘图
+    
+    fig=kp.kplot(df1,'MACD_KDJ')
+    fig.savefig('MACD_%s.jpg'%df1['ts_code'][0],dpi=300)
 
         
 
