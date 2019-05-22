@@ -11,10 +11,7 @@ except ImportError:
 import numpy as np
 import pandas as pd
 from data import TSPro_DataHandler
-import dataAnalysis as da
-all_return_info=pd.DataFrame(columns=['ts_code','hold_day_num','return_final'])
-all_return_info['ts_code']=da.symbol_list()
-all_return_info.set_index('ts_code',inplace=True)
+
 class Strategy(object):
     """
     Strategy is an abstract base class providing an interface for
@@ -110,7 +107,7 @@ class MACDPro_Strategy(Strategy):
                 if list((self.signals.iloc[-3:,index_signals]).values)==[0,1,0]: #刚刚持有1天，出现卖出情况
                     if self.signals.iat[-1,index_rrd]>8.0:
                         self.signals.iat[-1,index_signals]=0
-                    elif self.signals.iat[-1,index_rrd]>-2.0:
+                    elif self.signals.iat[-1,index_rrd]>-3.0:
                         self.signals.iat[-1,index_signals]=1
 
                 elif list((self.signals.iloc[-4:,index_signals]).values)==[0,1,1,0]:
@@ -133,59 +130,35 @@ class MACDPro_Strategy(Strategy):
         self.signals.loc[:,'return_rate_cum']=np.cumsum(self.signals.loc[:,'return_rate_day'].values)
 
 def backtest(symbol):
-    global all_return_info
-
-   # try:
-    symbol_list=[symbol]
-    start_date='20180604'
-    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
-    iStrategy=MACDPro_Strategy(td,symbol_list[0])
-    while(iStrategy.bars.continue_backtest):
-        iStrategy.calculate_signals()
-        
-    res_df=iStrategy.signals
-    res_df.to_csv('res/%s.csv'%symbol)
-    all_return_info.loc[symbol,'return_final']=res_df['return_rate_cum'].iloc[-1]
-    all_return_info.loc[symbol,'hold_day_num']=len(res_df[res_df['return_rate_day']!=0])
-    all_return_info.loc[symbol,'return_day_max']=res_df['return_rate_day'].max()
-    all_return_info.loc[symbol,'return_day_min']=res_df['return_rate_day'].min()
-    return res_df
-    #except:
-       # return 0
+    try:
+        symbol_list=[symbol]
+        start_date='20180604'
+        td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
+        iStrategy=MACDPro_Strategy(td,symbol_list[0])
+        while(iStrategy.bars.continue_backtest):
+            iStrategy.calculate_signals()
+            
+        res_df=iStrategy.signals
+        res_df.to_csv('res/%s.csv'%symbol)
+        return res_df
+    except:
+        return 0
 
 if __name__=='__main__':
     import multiprocessing as mp
     from multiprocessing import Pool
     mp.set_start_method('spawn')
-    
+    import dataAnalysis as da
     import time
     t0 = time.time()
-    #symbol_lists=da.symbol_list()
-    symbol_data=pd.read_csv('symbol_list_macdpro_select.csv')
-    0
-    symbol_lists=symbol_data['ts_code']
     symbol_lists=da.symbol_list()
-    #symbol_lists=pd.read_pickle('/Users/mac/Qigit/MySelectSymbolsV1/Symbollist.pkl')
+    #symbol_lists=['000001.SZ','000002.SZ','000004.SZ','000009.SZ']
+    with Pool(2) as p:
+        p.map(backtest, symbol_lists[:20]) #采用多进程进行并行计算
 
-
-    
-    # with Pool(2) as p:
-    #    res_df=p.map(backtest, symbol_lists[:10]) #采用多进程进行并行计算
-    
-    for i in symbol_lists[:]:
-        try:
-            backtest(i)
-            all_return_info.to_csv('all_return_info.csv')
-        except:
-            print('err:%s'%i)
-            continue
-        print('suc:%s'%i)
-
-    all_return_info.to_csv('all_return_info.csv')
     elapsed = time.time()-t0
     msg = "{:.2f}s"
     print(msg.format(elapsed))
-    0
 
     
 
