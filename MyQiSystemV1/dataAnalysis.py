@@ -29,11 +29,13 @@ def data_check():#测试下数据是否需要重新计算
     except:
         return True
 
-def data_cal_index():#把所有的数据进行分析并存储到一个文件中
+def data_cal_index_all():#把所有的数据进行分析并存储到一个文件中
     if data_check()==True:
         data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
         data['ST']=np.char.rfind(data['name'].values.astype('str'),'*ST')#字符串操作，去掉ST的股份
         dataSafe=data[data['ST']==-1] 
+
+
         iNum=0
         for iSymbol in dataSafe.loc[:,'ts_code']:
             print(iSymbol,':',iNum)
@@ -43,8 +45,17 @@ def data_cal_index():#把所有的数据进行分析并存储到一个文件中
                 single_data_cal_index(iSymbol)
             except:
                 continue
-        
+def data_cal_index(symbol_list):#把所有的数据进行分析并存储到一个文件中 
+        for iSymbol in symbol_list:
+            print(iSymbol,':',iNum)
+            iNum+=1
+            try:
+                single_data_cal_index(iSymbol)
+            except:
+                continue
+
 def single_data_cal_index(iSymbol):
+    
     df = ts.pro_bar(api=pro, ts_code=iSymbol, adj='qfq',start_date=start_fetch_date)   
     df=df.sort_values('trade_date')
     

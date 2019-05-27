@@ -4,10 +4,10 @@
 '''
 import tushare as ts 
 import pandas as pd
-import indexCal as ic
+import core.indexCal as ic
 import numpy as np
 import os
-import fetchData as fd
+import core.fetchData as fd
 
 
 
@@ -59,7 +59,7 @@ def single_data_cal_index(iSymbol):
     df1=df[df['trade_date']>=startDate]
     if not os.path.exists('symbol_data'):
         os.mkdir("symbol_data")
-    df1.to_pickle('symbol_data/%s.pkl'%df1['ts_code'][0])
+    df1.to_pickle('db/symbol_data/%s.pkl'%df1['ts_code'][0])
 
     
     
@@ -76,9 +76,9 @@ def symbol_list():#读取分析后的股票列表
 def data_read(symbol):#读取数据的方法  symbol 为000002.SZ 或者 000002.SZ.pkl
     try:
         if symbol[-4:]=='.pkl':
-            df=pd.read_pickle('symbol_data/%s'%symbol)
+            df=pd.read_pickle('db/symbol_data/%s'%symbol)
         else:
-            df=pd.read_pickle('symbol_data/%s.pkl'%symbol)
+            df=pd.read_pickle('db/symbol_data/%s.pkl'%symbol)
         return df
     except:
         return 0

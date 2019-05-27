@@ -139,7 +139,7 @@ def backtest(symbol):
    # try:
     symbol_list=[symbol]
     start_date='20180604'
-    td=TSPro_DataHandler('/Users/mac/Qigit/MySelectSymbolsV1/symbol_data',symbol_list,start_date)
+    td=TSPro_DataHandler('symbol_data',symbol_list,start_date)
     iStrategy=MACDPro_Strategy(td,symbol_list[0])
     while(iStrategy.bars.continue_backtest):
         iStrategy.calculate_signals()
@@ -163,13 +163,10 @@ if __name__=='__main__':
     t0 = time.time()
     #symbol_lists=da.symbol_list()
     symbol_data=pd.read_csv('symbol_list_macdpro_select.csv')
-    0
     symbol_lists=symbol_data['ts_code']
     symbol_lists=da.symbol_list()
     #symbol_lists=pd.read_pickle('/Users/mac/Qigit/MySelectSymbolsV1/Symbollist.pkl')
 
-
-    
     # with Pool(2) as p:
     #    res_df=p.map(backtest, symbol_lists[:10]) #采用多进程进行并行计算
     

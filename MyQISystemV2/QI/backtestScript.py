@@ -7,8 +7,8 @@ macd_select_backtest
 """
 import pandas as pd
 import numpy as np
-import dataAnalysis as da
-import kplot as kp
+import core.dataAnalysis as da
+import core.kplot as kp
 import matplotlib.pyplot as plt
 symbols=da.symbol_list()
 df_symbols_income=pd.DataFrame()
