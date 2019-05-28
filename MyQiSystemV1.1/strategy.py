@@ -157,7 +157,7 @@ def backtest(symbol):
 if __name__=='__main__':
     import multiprocessing as mp
     from multiprocessing import Pool
-    mp.set_start_method('spawn')
+    #mp.set_start_method('spawn')
     
     import time
     t0 = time.time()
@@ -165,6 +165,7 @@ if __name__=='__main__':
     symbol_data=pd.read_csv('symbol_list_macdpro_select.csv')
     symbol_lists=symbol_data['ts_code']
     symbol_lists=da.symbol_list()
+    symbol_lists=pd.read_pickle('Symbollist.pkl')
     #symbol_lists=pd.read_pickle('/Users/mac/Qigit/MySelectSymbolsV1/Symbollist.pkl')
 
     # with Pool(2) as p:
@@ -172,7 +173,7 @@ if __name__=='__main__':
     
     for i in symbol_lists[:]:
         try:
-            backtest(i)
+            backtest(i[:6])
             all_return_info.to_csv('all_return_info.csv')
         except:
             print('err:%s'%i)

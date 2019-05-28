@@ -18,7 +18,7 @@ import time
 
 si=pd.read_csv('symbol_list_macdpro_select.csv')
 t0 = time.time()
-da.data_cal_index(si['ts_code'].iloc[:20],method='yahoo',pallel=False)
+da.data_cal_index(si['ts_code'].iloc[:],method='yahoo',pallel=True)
 elapsed = time.time()-t0
 msg = "{:.2f}s"
 print(msg.format(elapsed))
@@ -47,6 +47,6 @@ for iSymbol in Symbollist:
     #fig=kp.kplot(df1,'KDJ')#绘图
     
     fig=kp.kplot(df1,'MACD_KDJ')
-    fig.savefig('MACD_%s.jpg'%df1['ts_code'][0],dpi=600)
+    fig.savefig('pic/MACD_%s.jpg'%df1['ts_code'][0],dpi=600)
 
 

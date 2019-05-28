@@ -22,10 +22,8 @@ def data_cal_index(symbol_list,method='yahoo',pallel=False):#把所有的数据�
             print(iSymbol,':',iNum)
             iNum+=1
     #        single_data_cal_index(iSymbol,method)
-            try:
-                single_data_cal_index(iSymbol,method)
-            except:
-                continue
+            single_data_cal_index(iSymbol,method)
+
     else:
         with Pool(4) as p:
             p.map(single_data_cal_index,symbol_list) #采用多进程进行并行计算
@@ -33,18 +31,22 @@ def data_cal_index(symbol_list,method='yahoo',pallel=False):#把所有的数据�
         
 
 def single_data_cal_index(iSymbol,method='yahoo'):
-    if method=='yahoo':
-        df=YFetchData(iSymbol,START_ANALYSIS_DATE).data
-    elif method=='tushare':
-        df=TFetchData(iSymbol,START_ANALYSIS_DATE).data
-    else:
+    try:
+        if method=='yahoo':
+            df=YFetchData(iSymbol,START_ANALYSIS_DATE).data
+        elif method=='tushare':
+            df=TFetchData(iSymbol,START_ANALYSIS_DATE).data
+        else:
+            pass
+        df=ic.macd_index_cal(df)
+        df=ic.kdj_index_cal(df)
+        df=ic.ema_index_cal(df)
+        df=ic.roc_index_cal(df)
+        df=df.fillna(0)
+        df.to_pickle('symbol_data/%s.pkl'%df['ts_code'][0][:6])
+        
+    except:
         pass
-    df=ic.macd_index_cal(df)
-    df=ic.kdj_index_cal(df)
-    df=ic.ema_index_cal(df)
-    df=ic.roc_index_cal(df)
-    df=df.fillna(0)
-    df.to_pickle('symbol_data/%s.pkl'%df['ts_code'][0][:6])
 
     
 def symbol_list():#读取分析后的股票列表 

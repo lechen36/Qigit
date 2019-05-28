@@ -13,7 +13,7 @@ from abc import ABCMeta, abstractmethod
 import os, os.path
 import numpy as np
 import pandas as pd
-import fix_yahoo_finance as yf
+import yfinance as yf
 import tushare as ts
 
 class FetchData(object):
@@ -76,7 +76,7 @@ class TFetchData(FetchData):
             pro = ts.pro_api()
             df = ts.pro_bar(api=pro, ts_code=self._symbol_name, adj='qfq',start_date=self.start_date)
             df.loc[:,'ts_code']=self.symbol
-            df.index=pd.DatetimeIndex(df.loc[:,'trade_date'])
+            df.index=pd.DatetimeIndex(df.loc[:,'trade_date'].values)
             df=df.sort_index()
         except:
             pass
