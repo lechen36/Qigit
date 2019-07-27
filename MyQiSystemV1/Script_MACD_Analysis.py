@@ -15,7 +15,7 @@ Created on Fri Apr  5 17:04:26 2019
 import dataAnalysis as da
 import data.DataHandler
 import data
-d.
+
 da.data_cal_index()
 # 数据获取及分析，分析今日出现MACD金叉，金叉Pre的股票
 import pandas as pd
@@ -48,3 +48,5 @@ for iSymbol in Symbollist:
     fig.savefig('MACD_%s.jpg'%df1['ts_code'][0],dpi=600)
 
 
+import matplotlib.pyplot as plt
+plt.hist()

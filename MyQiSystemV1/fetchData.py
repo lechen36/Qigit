@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import fix_yahoo_finance as yf
 import tushare as ts
+import matplotlib.pyplot as plt
 
 class FetchData(object):
     """
@@ -77,11 +78,50 @@ class TFetchData(FetchData):
         except:
             pass
         return df
+    
+def hist_corr(symbol_data,goal_data):
+    """
+        symbol_data: DataFrame
+            columns:       example:
+            ts_code         600015
+            trade_date    20190611
+            open              7.58
+            high              7.67
+            low               7.56
+            close             7.66
+            pre_close         7.57
+            change            0.09
+            pct_chg           1.19
+            vol             313194
+            amount          238978 
+    """
+    r_coff=[]
+    dateNum=len(goal_data)
+    y=goal_data.loc[:,['open','high','low','close']].values
+    y=y.reshape(-1).tolist()
+    for i in range(0,len(symbol_data)-len(goal_data)):
+        x=symbol_data.loc[i:i+dateNum-1,['open','high','low','close']].values
+        x=x.reshape(-1).tolist()
+        print(len(x),len(y))
+        r=np.corrcoef(x,y)
+        r_coff.append(r[0,1])
+        
+    return r_coff
+
 
 if __name__=='__main__': 
-    td1=TFetchData('600000','2018-01-01').data
-    td2=TFetchData('600004','2018-01-01').data
-    td3=YFetchData('600006','2018-01-01').data
-    0
+#    array_list=[]
+#    for i in ['600015','600016','600017']:
+#        td=TFetchData(i,'2018-01-01').data
+#        td_array=td.loc[:,['open','high','low','close']].values
+#        td_array=td_array.reshape(-1).tolist()
+#        array_list.append(td_array)
+    
+    i='600015'
+    symbol_data=TFetchData(i,'2018-01-01').data
+    goal_data=symbol_data.iloc[-10:,:]
+    
+    r_coff=hist_corr(symbol_data,goal_data)
+
  
     #print(td.data.head(5))
